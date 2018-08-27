@@ -7,6 +7,6 @@ npm install
 ```bash
 gulp watch
 ```
-（预览 localhost:3000/src/）
+（预览 localhost:3000/dist/）
 ### src目录为源文件
 ### 执行gulp build,发布dist目录
