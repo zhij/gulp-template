@@ -20,7 +20,7 @@ gulp.task('sass', function(){
         }))
         .pipe(rename(function (path) {
             path.dirname = path.dirname.replace('sass', 'css') 
-         }))
+        }))
         .pipe(gulp.dest('src/'))
 		.pipe(browserSync.reload({
 	      	stream: true
@@ -33,12 +33,11 @@ gulp.task('minjs', function(){
 		.pipe(gulp.dest('dist/'))
 })
 
-gulp.task('watch', ['browserSync', 'sass', 'build'], function(){
-	gulp.watch('src/**/*.scss', ['sass', 'build']);
-	gulp.watch('src/**/*.html', browserSync.reload);
+gulp.task('watch', ['browserSync', 'sass', 'fileinclude'], function(){
+	gulp.watch('src/**/*.scss', ['sass']);
+    gulp.watch('src/**/*.html', browserSync.reload);
+    gulp.watch('src/**/*.html', ['fileinclude']);
     gulp.watch('src/**/*.js', browserSync.reload);
-    gulp.watch('src/**/*.html', ['build']);
-  	gulp.watch('src/**/*.js', ['build']);
 })
 
 gulp.task('browserSync', function() {
@@ -83,20 +82,20 @@ gulp.task('minhtml', function () {
         minifyJS: true,//压缩页面JS
         minifyCSS: true//压缩页面CSS
     };
-    gulp.src('src/**/*.html')
+    gulp.src(['src/**/*.html', '!./src/layout/*.html'])
         .pipe(htmlmin(options))
         .pipe(gulp.dest('dist/'));
 });
 
 gulp.task('fileinclude', function() {
-    gulp.src(['./src/*.html'])//主文件
+    gulp.src(['./src/*.html', '!./src/layout/*.html'])//主文件
         .pipe(fileinclude({
             prefix: '@@',//变量前缀 @@include
             basepath: './src/layout',//引用文件路径
             indent:true//保留文件的缩进
         }))
-        .pipe(gulp.dest('./dist'));//输出文件路径
+        .pipe(gulp.dest('./src/'));//输出文件路径
 });
 
 // 打包
-gulp.task('build', ['clear', 'fileinclude', 'minjs', 'img', 'mincss'])
+gulp.task('build', ['clear', 'minhtml', 'minjs', 'img', 'mincss'])
